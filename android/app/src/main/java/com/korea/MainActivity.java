@@ -1,4 +1,4 @@
-package com.baumbach.researdkorea;
+package com.zitaheller.childcareexp;
 
 import com.facebook.react.ReactActivity;
 

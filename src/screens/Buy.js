@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.7,
     paddingVertical: 10,
     borderRadius: 10,
-    borderColor: 'pink',
+    borderColor: 'blue',
     borderWidth: 3,
     elevation: 2,
     marginBottom: 10,

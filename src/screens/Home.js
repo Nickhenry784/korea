@@ -5,7 +5,7 @@ import {
   Text, Dimensions, 
   ImageBackground, 
   Image,
-  FlatList, 
+  ScrollView, 
   Alert  } from "react-native";
 import React, {useEffect, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
@@ -15,21 +15,32 @@ import { images } from "../assets";
 
 const windowWidth = Dimensions.get('screen').width;
 const windowHeight = Dimensions.get('screen').height;
-const dataButton = [{id: 1, image: images.Hanbok, background: images.hanbokInfo}, {id: 2, image: images.chuseokDay, background: images.chuseokInfo}, {id: 3, image: images.ginseng, background: images.ginsengInfo}, {id: 4, image: images.kimchi, background: images.kimchiInfo}];
+const dataButton = [{id: 1, background: images.background}, {id: 2,  background: images.clothesbaby}, {id: 3,  background: images.babysleep}, {id: 4, background: images.camera}, {id: 5, background: images.sleep2}];
 
 const Home = () => {
   const navigation = useNavigation();
-
+  const [index, setIndex] = useState(0);
   const points = useSelector(state => state.points);
   const dispatch = useDispatch();
 
-  const onClickStartButton = (item) => {
-    if (points.value === 0) {
+  useEffect(() => {
+
+  }, [index])
+
+  const onClickStartButton = () => {
+    if (points.value === 0 && index === 0) {
       Alert.alert('Please buy more turn');
       return false;
     }
-    dispatch(decrement());
-    navigation.navigate("Info", {image: item});
+    
+    if(index === dataButton.length - 1){
+      setIndex(0);
+      return false;
+    }
+    if(index === 0){
+   dispatch(decrement());
+    }
+    setIndex(index + 1)
   }
 
 
@@ -38,28 +49,28 @@ const Home = () => {
   }
 
 
-  return (
-    <ImageBackground style={appStyle.homeView} source={images.background}>
-      <View style={appStyle.appBar}>
-        <TouchableOpacity onPress={onClickTurnButton}>
-          <View style={appStyle.turnView}>
-            <Image source={images.buy} style={appStyle.scoreStyle} />
-            <Text style={appStyle.turnText}>{points.value}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-      <Image source={images.wellcomeToKorea} style={appStyle.welcomeImage} />
-      <FlatList 
-        data={dataButton}
-        style={{marginTop: windowHeight * 0.1}}
-        scrollEnabled={false}
-        renderItem={({item}) => (
-          <TouchableOpacity onPress={() => onClickStartButton(item.background)} key={item.id}>
-            <Image source={item.image} style={appStyle.successImage} />
+  return ( dataButton[index].id === 1 ?
+      <ImageBackground style={appStyle.homeView} source={dataButton[index].background}>
+        <View style={appStyle.appBar}>
+          <Text style={appStyle.turnText}>{`View ${points.value}`}</Text>
+          <TouchableOpacity onPress={onClickTurnButton}>
+            <Image source={images.shoppingicon} style={appStyle.scoreStyle} />
           </TouchableOpacity>
-        )}
-      />
-    </ImageBackground>
+        </View>
+        <Image source={images.frame} style={appStyle.welcomeImage}/>
+
+      <TouchableOpacity onPress={onClickStartButton} style={appStyle.bottomButton}>
+          <Image source={images.buttonnext} style={appStyle.successImage} />
+      </TouchableOpacity>
+    </ImageBackground> : 
+    <View style={appStyle.homeView}>
+      <ScrollView>
+        <Image style={appStyle.scrollImage} source={dataButton[index].background} />
+      </ScrollView>
+      <TouchableOpacity onPress={onClickStartButton} style={appStyle.bottomButton}>
+          <Image source={images.buttonnext} style={appStyle.successImage} />
+      </TouchableOpacity>
+  </View>
   );
 };
 
@@ -74,13 +85,13 @@ export const appStyle = StyleSheet.create({
     resizeMode: 'cover',
   },
   appBar: {
-    paddingTop: 10,
-    flex: 0.2,
+    flex: 0.1,
     width: '100%',
     paddingHorizontal: 10,
+    marginBottom: 20,
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
   },
   turnView: {
     width: windowWidth * 0.15,
@@ -91,13 +102,17 @@ export const appStyle = StyleSheet.create({
   },
   welcomeImage: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.06,
+    height: windowWidth > 640 ? windowHeight * 0.1 : windowHeight * 0.08,
+    resizeMode: 'cover',
+  },
+  scrollImage: {
+    width: windowWidth,
+    height: windowHeight * 1.2,
     resizeMode: 'cover',
   },
   successImage: {
-    width: windowWidth * 0.6,
+    width: windowWidth * 0.2,
     height: windowHeight * 0.1,
-    marginVertical: 10,
     resizeMode: 'contain',
   },
   scoreStyle: {
@@ -105,6 +120,10 @@ export const appStyle = StyleSheet.create({
     height: windowWidth * 0.1,
     resizeMode: 'contain',
     alignItems: 'center',
+  },
+  bottomButton: {
+    position: 'absolute',
+    bottom: '10%',
   },
   turnText: {
     fontSize: windowWidth > 640 ? 30 : 20,
